@@ -45,13 +45,17 @@ class ReservationSerializer(serializers.ModelSerializer):
 
         return reservation
 
-        # [
-        #     {
-        #         first_name,
-        #         last_name,
-        #         ..,
-        #         ...
-        #         },
-        #     {},
-        #     {}
-        # ]
+class StaffFlightSerializer(serializers.ModelSerializer):
+    reservations = ReservationSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Flight
+        fields = (
+            "flightNumber",
+            "operatingArilines",
+            "departureCity",
+            "arrivalCity",
+            "dateOfDepature",
+            "estimatedTimeOfDeparture",
+            "reservations"
+        )
