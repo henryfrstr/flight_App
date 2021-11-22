@@ -1,3 +1,4 @@
+from django.db.models import query
 from .models import Flight, Reservation
 from .serializers import FlightSerializer, ReservationSerializer, StaffFlightSerializer
 from rest_framework import viewsets, filters
@@ -27,8 +28,11 @@ class FlightView(viewsets.ModelViewSet):
         if self.request.user.is_staff:
             return super().get_queryset()
         else:
-            queryset = Flight.objects.filter(dateOfDepature__gte=today).filter(
-                estimatedTimeOfDeparture__gt=current_time)
+            queryset = Flight.objects.filter(dateOfDepature__gt=today)
+            if Flight.objects.filter(dateOfDepature=today):
+                today_qs = Flight.objects.filter(dateOfDepature=today).filter(
+                    estimatedTimeOfDeparture__gt=now)
+                queryset = queryset.union(today_qs)
             return queryset
 
 
